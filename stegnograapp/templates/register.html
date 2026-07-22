@@ -1,0 +1,555 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PixelSafe - Secure Data Hiding">
+    <meta name="author" content="PixelSafe Team">
+    <title>PixelSafe - Create Your Account</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue: #0a0f2b;
+            --dark-blue: #111827;
+            --medium-blue: #1e293b;
+            --accent-blue: #3b82f6;
+            --light-blue: #60a5fa;
+            --bright-blue: #93c5fd;
+            --neon-blue: #00d9ff;
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --gradient: linear-gradient(135deg, var(--accent-blue), var(--light-blue));
+            --neon-gradient: linear-gradient(135deg, var(--neon-blue), var(--light-blue));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header & Navigation */
+        .navbar {
+            background: rgba(10, 15, 43, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-light);
+        }
+        
+        .logo span {
+            background: var(--neon-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--light-blue);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--neon-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Main Content */
+        .container {
+            display: flex;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.03"><polygon fill="%2300d9ff" points="0,1000 0,0 1000,0"/></svg>');
+            background-size: cover;
+        }
+        
+        .register-panel {
+            background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue));
+            backdrop-filter: blur(10px);
+            padding: 50px 40px;
+            border-radius: 16px;
+            width: 500px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .register-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .register-header {
+            margin-bottom: 30px;
+        }
+        
+        .register-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, var(--bright-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .register-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+        
+        /* File Upload Styling */
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px dashed rgba(59, 130, 246, 0.4);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--accent-blue);
+            background: rgba(30, 41, 59, 0.9);
+        }
+        
+        .file-upload-label i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        /* Checkbox Styling */
+        .form-check {
+            display: flex;
+            align-items: flex-start;
+            margin: 25px 0;
+            text-align: left;
+        }
+        
+        .form-check-input {
+            margin-right: 12px;
+            margin-top: 5px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-blue);
+        }
+        
+        .form-check-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        
+        .form-check-label strong {
+            color: var(--text-light);
+        }
+        
+        /* Button Styling */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .register-links {
+            margin-top: 25px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .register-links a {
+            color: var(--light-blue);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .register-links a:hover {
+            color: var(--neon-blue);
+            text-decoration: underline;
+        }
+        
+        /* Floating Animation */
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(96, 165, 250, 0.05);
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .shape-1 {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 5s;
+        }
+        
+        .shape-3 {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--deep-blue);
+            padding: 20px 0;
+            border-top: 1px solid rgba(59, 130, 246, 0.1);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .register-panel {
+                padding: 40px 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .register-panel {
+                padding: 30px 20px;
+            }
+            
+            .register-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="/index/" class="logo">
+                <i class="fas fa-user-secret"></i>
+                <span>PixelSafe</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/content/">Content</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="floating-shapes">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+        
+        <div class="register-panel">
+            <div class="register-header">
+                <h1>Create Your Account</h1>
+                <p>Join PixelSafe to secure your data with advanced steganography</p>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="Profilepicture">Profile Picture</label>
+                    <div class="file-upload">
+                        <label class="file-upload-label" for="Profilepicture">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Choose profile picture</span>
+                        </label>
+                        <input type="file" id="Profilepicture" name="image" accept="image/*">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="exampleInputusername">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" id="exampleInputusername" placeholder="Choose a unique username" name="username" required>
+                    </div>
+                    <small class="form-text" style="color: var(--text-muted); margin-top: 5px; display: block;">Choose a unique username for your account.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter your email" name="email" required>
+                    </div>
+                    <small class="form-text" style="color: var(--text-muted); margin-top: 5px; display: block;">We'll never share your email with anyone else.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phonenumber">Phone Number</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="text" class="form-control" id="phonenumber" placeholder="Enter your phone number" name="phone">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Create a strong password" name="password" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="exampleconfirmpassword">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="exampleconfirmpassword" placeholder="Confirm your password" name="confirmpassword" required>
+                    </div>
+                </div>
+                
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">
+                        If you really don't want any newsletter <strong>check this box</strong>. Then you just agree to receive our marketing mails and product stuff. If you check this box <strong>we will not send out our newsletter</strong> to you at all...on mondays.
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Create Account</button>
+                
+                <div class="register-links">
+                    Already have an account? <a href="/login/">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="navbar-container">
+            <p>&copy; 2023 PixelSafe. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Add focus effect to form inputs
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.querySelector('i').style.color = 'var(--light-blue)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.querySelector('i').style.color = 'var(--text-muted)';
+            });
+        });
+        
+        // File upload label update
+        document.getElementById('Profilepicture').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose profile picture';
+            document.querySelector('.file-upload-label span').textContent = fileName;
+        });
+    </script>
+</body>
+</html>

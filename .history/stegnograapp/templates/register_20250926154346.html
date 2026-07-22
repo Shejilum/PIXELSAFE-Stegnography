@@ -1,0 +1,114 @@
+{% load static %}
+<!doctype html>
+<html class="h-100" lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta name="description" content="A well made and handcrafted Bootstrap 5 template">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="img/favicon.png">
+  <meta name="author" content="Holger Koenemann">
+  <meta name="generator" content="Eleventy v2.0.0">
+  <meta name="HandheldFriendly" content="true">
+  <style>
+  body {
+    background: #D6E6FF;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+    .middle-panel {
+      font-family: Arial, sans-serif;
+    align-self: center;
+    background-color: #1a1a1a;
+    backdrop-filter: blur(10px); /* Blur effect for premium look */        
+    padding: 40px;
+    border-radius: 16px;
+    width: 900px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    margin: 40px 0;
+    transition: transform 0.5s ease, box-shadow 0.3s ease;
+    }
+    .navbar {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .logo {
+            font-size: 20px;
+            margin-left: 20px;
+        }
+        .navbar .logo::before {
+            content: "📷";
+            margin-left: 5px;
+        }
+        .navbar nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+        }
+  </style>
+  <title>Register a new account</title>
+  <link rel="stylesheet" href="{% static 'css/theme.min.css' %}">
+  </head>
+  <body class="d-flex h-100 w-100 bg-black text-white" data-bs-spy="scroll" data-bs-target="#navScroll" style="background-color: linear-gradient(45deg, #ffffff, #4A90E2);">
+    <div class="navbar">
+        <div class="logo"><a href="/index/" style="text-decoration: none; color:rgb(255, 255, 255)">PixelSafe</a></div>
+        <nav>
+            <a href="/main/" align="center">Home</a>
+            <a href="/content/" align="center">Content</a>
+        </nav>
+    </div>
+  <div class="middle-panel">
+  </header>
+  <main class="mb-auto col-12">
+  <h1>Register a new account</h1><br><br>
+<form class="row" method="post">
+  {% csrf_token %}
+  <div class="col-12">
+    <div class="mb-3">
+      <label for="Profilepicture" class="form-label">Profile : </label>
+      <input type="file" class="form-control form-control-lg bg-gray-800 border-dark" id="Profilepicture" aria-describedby="ProfileHelp">
+      <div id="usernameHelp" class="form-text"></div>
+  <div class="mb-3">
+    <div class="mb-3">
+      <label for="exampleInputusername" class="form-label">Username : </label>
+      <input type="text" class="form-control form-control-lg bg-gray-800 border-dark" id="exampleInputusername" aria-describedby="usernameHelp">
+      <div id="usernameHelp" class="form-text">Choose a unique username for your account.</div>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Email address : </label>
+    <input type="email" class="form-control form-control-lg bg-gray-800 border-dark" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+    <div class="mb-3">
+    <label for="phonenumber" class="form-label">Phone number : </label>
+    <input type="text" class="form-control form-control-lg bg-gray-800 border-dark" id="phonenumber">
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Password : </label>
+    <input type="password" class="form-control form-control-lg bg-gray-800 border-dark" id="exampleInputPassword1">
+  </div>
+  <div class="mb-3">
+    <label for="exampleconfirmpassword" class="form-label">Confirm Password : </label>
+    <input type="password" class="form-control form-control-lg bg-gray-800 border-dark" id="exampleconfirmpassword">
+  </div>
+  <div class="mb-3 form-check py-3">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+    <label class="form-check-label" for="exampleCheck1">If you really don´t want any newsletter <strong>check this box</strong>. Then you just agree to receive our marketing mails and product stuff. If you check this box <strong>we will not send out our newsletter</strong> to you at all...on mondays.</label>
+  </div>
+  <button type="submit" class="btn btn-white btn-xl mb-4">Submit</button>
+</div>
+</div>
+</div>
+</form>
+</main>
+</body>
+</html>

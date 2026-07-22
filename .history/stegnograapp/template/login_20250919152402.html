@@ -1,0 +1,112 @@
+{% }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelSafe Login</title>
+    <style>
+        body {
+            background: #D6E6FF;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .navbar {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .logo {
+            font-size: 20px;
+            margin-right: 20px;
+        }
+        .navbar .logo::before {
+            content: "📷";
+            margin-right: 5px;
+        }
+        .navbar nav a {
+            
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+        }
+        .middle-panel {
+            background-color: #1a1a1a;
+            backdrop-filter: blur(10px); /* Blur effect for premium look */
+            padding: 40px;
+            border-radius: 16px;
+            width: 900px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin: 40px 0;
+            transition: transform 0.5s ease, box-shadow 0.3s ease;
+        }
+        .middle-panel h1 {
+            color: #D6E6FF;
+            margin: 0 0 20px 0;
+        }
+        .middle-panel input {
+            width: 70%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #333;
+            border: none;
+            color: rgb(0, 0, 0);
+            border-radius: 5px; /* Rounded edges */
+        }
+        .middle-panel button {
+            width: 70%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: linear-gradient(45deg, #0e1bb0, #f5dd29);
+            border: none;
+            color: rgb(0, 0, 0);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.5s ease, box-shadow 0.3s ease;
+        }
+        .middle-panel p {
+            font-size: 12px;
+            color: #bbb;
+        }.right-panel {
+            width: 40%;
+            background: #D6E6FF;
+        }
+        .left-panel {
+            width: 40%;
+            background: #D6E6FF;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo"><a href="index.html" style="text-decoration: none; color:rgb(255, 255, 255)">PixelSafe</a></div>
+        <nav>
+            <a href="main.html">Home</a>
+            <a href="content.html">Content</a>
+        </nav>
+    </div>
+    <div class="container">
+        <div class=" left-panel"></div>
+        <div class="middle-panel">
+            <h1>Login</h1>
+            <p>Email address</p>
+            <input type="email" placeholder="Enter your email">
+            <p>Password</p>
+            <input type="password" placeholder="Enter your password">
+            <button> Login </button>
+        </div>
+        <div class="right-panel"></div>
+    </div>
+</body>
+</html>

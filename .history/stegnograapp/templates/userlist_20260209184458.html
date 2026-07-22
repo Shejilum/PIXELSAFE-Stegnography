@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelSafe - User Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue: #0a0f2b; --dark-blue: #111827; --medium-blue: #1e293b;
+            --accent-blue: #3b82f6; --light-blue: #60a5fa; --bright-blue: #93c5fd;
+            --neon-blue: #00d9ff; --admin-purple: #8b5cf6; --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --gradient: linear-gradient(135deg, var(--accent-blue), var(--light-blue));
+            --admin-gradient: linear-gradient(135deg, var(--admin-purple), var(--accent-blue));
+            --error-color: #ef4444; --success-color: #10b981;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%); color: var(--text-light); line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
+        
+        .navbar { background: rgba(10, 15, 43, 0.95); backdrop-filter: blur(10px); padding: 15px 0; border-bottom: 1px solid rgba(59, 130, 246, 0.1); position: sticky; top: 0; z-index: 100; }
+        .navbar-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--text-light); }
+        .logo span { background: var(--admin-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 25px; list-style: none; }
+        .nav-links a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: all 0.3s ease; }
+        .nav-links a:hover, .nav-links a.active { color: var(--light-blue); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; }
+        .dashboard-header { text-align: center; margin-bottom: 40px; }
+        .dashboard-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; background: var(--admin-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .admin-badge { display: inline-block; background: var(--admin-gradient); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); margin-top: 10px; }
+        
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--admin-gradient); color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); margin-bottom: 30px; }
+        .back-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.5); }
+        
+        .users-table-container { background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue)); border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border: 1px solid rgba(139, 92, 246, 0.2); overflow: hidden; }
+        .users-table { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; }
+        .users-table thead { background: var(--admin-gradient); }
+        .users-table th { padding: 16px 20px; text-align: left; font-weight: 600; color: white; }
+        .users-table tbody tr { background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid rgba(139, 92, 246, 0.1); }
+        .users-table tbody tr:hover { background: rgba(139, 92, 246, 0.1); transform: translateX(5px); transition: 0.3s; }
+        .users-table td { padding: 16px 20px; color: var(--text-light); }
+        
+        .user-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--admin-purple); }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-name { font-weight: 600; color: var(--text-light); }
+        .user-email { font-size: 0.85rem; color: var(--text-muted); }
+        
+        .btn { padding: 8px 16px; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border: none; font-size: 0.85rem; transition: 0.3s; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4); }
+        /* Removed .btn-secondary styles as it's no longer used */
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; }
+        .stat-card { background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue)); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid rgba(139, 92, 246, 0.1); }
+        .stat-icon { font-size: 2rem; color: var(--admin-purple); margin-bottom: 10px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text-light); margin-bottom: 5px; }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); }
+        
+        footer { background: var(--deep-blue); padding: 20px 0; border-top: 1px solid rgba(59, 130, 246, 0.1); text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 40px; }
+        
+        @media (max-width: 768px) { .users-table th, .users-table td { padding: 12px 15px; } .stats-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="/index/" class="logo"><i class="fas fa-user-secret"></i><span>PixelSafe</span></a>
+            <ul class="nav-links">
+                <li><a href="/admindash/">Dashboard</a></li>
+                <li><a href="/userlist/" class="active">User Management</a></li>
+                <li><a href="/logout/">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>User Management</h1>
+            <p>Manage all registered PixelSafe users</p>
+            <div class="admin-badge"><i class="fas fa-shield-alt"></i> Administrator Access</div>
+        </div>
+        
+        <a href="/admindash/" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        
+        <div class="users-table-container">
+            {% if a %}
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>User Profile</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in a %}
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                {% if user.image %}
+                                <img src="{{ user.image.url }}" alt="Profile" class="user-avatar">
+                                {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=8b5cf6&color=fff" alt="Profile" class="user-avatar">
+                                {% endif %}
+                                <div class="user-details">
+                                    <div class="user-name">{{ user.username }}</div>
+                                    <div class="user-email">{{ user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td class="user-phone">{{ user.phone }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <form method="post" action="/deleteuser/{{ user.email }}/" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
+                                </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-users" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                <i class="fas fa-users-slash" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                <p>No users registered yet.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-value" id="total-users">{{ total_users }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                <div class="stat-value">{{ active_users }}</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-file-export"></i></div>
+                <div class="stat-value">{{ files_processed }}</div>
+                <div class="stat-label">Files Processed</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="stat-value">{{ enc_types }}</div>
+                <div class="stat-label">Encryption Types</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="navbar-container"><p>&copy; 2023 PixelSafe. All rights reserved.</p></div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.btn-danger');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

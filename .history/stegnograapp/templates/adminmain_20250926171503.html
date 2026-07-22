@@ -1,0 +1,106 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <style>
+        body {
+            background: #000000;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .navbar {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .logo {
+            font-size: 20px;
+            margin-left: 20px;
+        }
+        .navbar .logo::before {
+            content: "📷";
+            margin-left: 5px;
+        }
+        .navbar nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+        }
+        .middle-panel {
+            background-color: #1a1a1a;
+            backdrop-filter: blur(10px); /* Blur effect for premium look */
+            padding: 40px;
+            border-radius: 16px;
+            width: 900px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin: 40px 0;
+            transition: transform 0.5s ease, box-shadow 0.3s ease;
+        }
+        .middle-panel h1 {
+            color: #D6E6FF;
+            margin: 0 0 20px 0;
+        }
+        .middle-panel input {
+            width: 70%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #333;
+            border: none;
+            border-radius: 8px;
+            color: white;
+        }
+        .middle-panel button {
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .middle-panel button:hover {
+            background-color: #357ABD;
+        }
+        .right-panel {
+            flex: 1;
+            background: url('{% static "images/loginimage.jpg" %}') no-repeat center center;
+            background-size: cover;
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+            display: none; /* Hidden on smaller screens */
+        }
+        @media (min-width: 992px) {
+            .right-panel {
+                display: block; /* Show on larger screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo"><a href="/index/" style="text-decoration: none; color:rgb(255, 255, 255)">PixelSafe</a></div>
+        <nav>
+            <a href="/main/">Home</a>
+            <a href="/content/">Content</a>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="left-panel"></div>
+        <div class="middle-panel">

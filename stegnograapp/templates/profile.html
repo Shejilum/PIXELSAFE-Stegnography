@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelSafe - User Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue: #0a0f2b; --dark-blue: #111827; --medium-blue: #1e293b;
+            --accent-blue: #3b82f6; --light-blue: #60a5fa; --bright-blue: #93c5fd;
+            --neon-blue: #00d9ff; --text-light: #e5e7eb; --text-muted: #9ca3af;
+            --gradient: linear-gradient(135deg, var(--accent-blue), var(--light-blue));
+            --neon-gradient: linear-gradient(135deg, var(--neon-blue), var(--light-blue));
+            --success-gradient: linear-gradient(135deg, #10b981, #34d399); /* Green for decoding */
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%); color: var(--text-light); line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
+        
+        .navbar { background: rgba(10, 15, 43, 0.95); backdrop-filter: blur(10px); padding: 15px 0; border-bottom: 1px solid rgba(59, 130, 246, 0.1); position: sticky; top: 0; z-index: 100; }
+        .navbar-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--text-light); }
+        .logo span { background: var(--neon-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 25px; list-style: none; }
+        .nav-links a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: all 0.3s ease; }
+        .nav-links a:hover { color: var(--light-blue); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; }
+        .dashboard-header { text-align: center; margin-bottom: 40px; }
+        .dashboard-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; background: linear-gradient(90deg, #fff, var(--bright-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+        
+        .profile-card, .stats-card { background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue)); border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border: 1px solid rgba(59, 130, 246, 0.1); position: relative; z-index: 1; }
+        .profile-header { text-align: center; margin-bottom: 30px; }
+        .profile-avatar { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-blue); margin-bottom: 20px; }
+        
+        .profile-info { margin-top: 25px; }
+        .info-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(59, 130, 246, 0.1); }
+        .info-item:last-child { border-bottom: none; }
+        .info-label { font-weight: 500; color: var(--text-light); display: flex; align-items: center; gap: 10px; }
+        .info-label i { color: var(--light-blue); width: 20px; }
+        .info-value { color: var(--text-muted); }
+
+        .password-container { display: flex; align-items: center; gap: 10px; }
+        .eye-button { background: none; border: none; color: var(--light-blue); cursor: pointer; font-size: 1rem; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .stat-item { background: rgba(30, 41, 59, 0.5); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid rgba(59, 130, 246, 0.1); }
+        .stat-icon { font-size: 2rem; color: var(--light-blue); margin-bottom: 10px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--text-light); }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); }
+
+        .activity-section { margin-top: 30px; }
+        .activity-list { list-style: none; }
+        .activity-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 8px; margin-bottom: 10px; background: rgba(30, 41, 59, 0.5); }
+        .activity-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gradient); color: white; }
+        .activity-content { flex: 1; }
+        .activity-title { font-weight: 500; color: var(--text-light); }
+        .activity-time { font-size: 0.85rem; color: var(--text-muted); }
+
+        .action-buttons { display: flex; gap: 15px; margin-top: 30px; }
+        .btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: none; }
+        .btn-primary { background: var(--gradient); color: white; }
+        .btn-outline { background: transparent; color: var(--bright-blue); border: 1px solid var(--bright-blue); }
+
+        @media (max-width: 992px) { .dashboard-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .navbar-container { flex-direction: column; } .stats-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="/index/" class="logo"><i class="fas fa-user-secret"></i><span>PixelSafe</span></a>
+            <ul class="nav-links">
+                <li><a href="/main/">Home</a></li>
+                <li><a href="/content/">Content</a></li>
+                <li><a href="/profile/" class="active">Profile</a></li>
+                <li><a href="/logout/">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>User Dashboard</h1>
+            <p>Manage your PixelSafe account and security settings</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="profile-card">
+                <div class="profile-header">
+                    {% if user.image %}
+                    <img src="{{user.image.url}}" alt="Profile Picture" class="profile-avatar">
+                    {% else %}
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdK_dnE_5cezDHypwWCPUwWlUQU0y4pwvyDA&s" alt="Profile Picture" class="profile-avatar">
+                    {% endif %} 
+                    <h2>{{user.username}}</h2>
+                </div>
+                
+                <div class="profile-info">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-user"></i> Username</span>
+                        <span class="info-value">{{user.username}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-key"></i> Password</span>
+                        <span class="password-container">
+                            <span class="password-text" id="password">{{user.password}}</span>
+                            <button class="eye-button" onclick="togglePassword()"><i class="fas fa-eye"></i></button>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-phone"></i> Phone</span>
+                        <span class="info-value">{{user.phone}}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-envelope"></i> Email</span>
+                        <span class="info-value">{{user.email}}</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="location.href='{% url 'editprofile' %}'">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-card">
+                <div class="stats-header">
+                    <h3>Account Statistics</h3>
+                    <p>Your PixelSafe usage and activity</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-file-image"></i></div>
+                        <div class="stat-value">{{ stats.files_processed }}</div>
+                        <div class="stat-label">Files Processed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="stat-value">{{ stats.secure_messages }}</div>
+                        <div class="stat-label">Secure Encodings</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-download"></i></div>
+                        <div class="stat-value">{{ stats.files_downloaded }}</div>
+                        <div class="stat-label">Files Decoded</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+                        <div class="stat-value">{{ stats.days_active }}</div>
+                        <div class="stat-label">Days Active</div>
+                    </div>
+                </div>
+                
+                <div class="activity-section">
+                    <div class="activity-header">
+                        <h3>Recent Activity</h3>
+                    </div>
+                    
+                    <ul class="activity-list">
+                        {% for item in recent_activity %}
+                        <li class="activity-item">
+                            <div class="activity-icon" style="background: {% if 'Encode' in item.activity_type %}var(--gradient){% else %}var(--success-gradient){% endif %};">
+                                {% if 'Encode' in item.activity_type %}
+                                    <i class="fas fa-lock"></i>
+                                {% else %}
+                                    <i class="fas fa-unlock"></i>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="activity-content">
+                                <div class="activity-title">
+                                    {{ item.activity_type|default:"Processed File" }}
+                                </div>
+                                <div class="activity-time">
+                                    {% if item.media %}
+                                        File: {{ item.media.name|slice:"8:" }} <br> {% elif item.stego_media %}
+                                        File: {{ item.stego_media.name|slice:"13:" }} <br> {% endif %}
+                                    <span style="font-size:0.8rem; opacity:0.7;">{{ item.uploaded_at|timesince }} ago</span>
+                                </div>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="activity-item">
+                            <div class="activity-icon" style="background:#64748b"><i class="fas fa-info"></i></div>
+                            <div class="activity-content">
+                                <div class="activity-title">No recent activity</div>
+                                <div class="activity-time">Encode a file to see it here</div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordElement = document.getElementById('password');
+            const isHidden = passwordElement.textContent === '********';
+            passwordElement.textContent = isHidden ? '{{user.password}}' : '********';
+        }
+    </script>
+</body>
+</html>

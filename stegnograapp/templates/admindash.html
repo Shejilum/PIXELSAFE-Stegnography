@@ -1,0 +1,269 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelSafe - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --deep-blue: #0a0f2b; --dark-blue: #111827; --medium-blue: #1e293b;
+            --accent-blue: #3b82f6; --light-blue: #60a5fa; --bright-blue: #93c5fd;
+            --neon-blue: #00d9ff; --admin-purple: #8b5cf6; --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --gradient: linear-gradient(135deg, var(--accent-blue), var(--light-blue));
+            --admin-gradient: linear-gradient(135deg, var(--admin-purple), var(--accent-blue));
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%); color: var(--text-light); line-height: 1.6; min-height: 100vh; overflow-x: hidden; display: flex; }
+        
+        /* Vertical Navbar */
+        .vertical-navbar { width: 280px; background: rgba(10, 15, 43, 0.95); backdrop-filter: blur(10px); border-right: 1px solid rgba(59, 130, 246, 0.1); height: 100vh; position: fixed; left: 0; top: 0; z-index: 100; padding: 20px 0; overflow-y: auto; }
+        .vertical-navbar::-webkit-scrollbar { width: 6px; }
+        .vertical-navbar::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.5); }
+        .vertical-navbar::-webkit-scrollbar-thumb { background: var(--admin-purple); border-radius: 3px; }
+        
+        .nav-header { padding: 0 25px 25px 25px; border-bottom: 1px solid rgba(59, 130, 246, 0.1); margin-bottom: 25px; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--text-light); margin-bottom: 20px; }
+        .nav-logo span { background: var(--admin-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+        .nav-menu { list-style: none; padding: 0 15px; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: var(--text-light); text-decoration: none; border-radius: 10px; transition: all 0.3s ease; font-weight: 500; }
+        .nav-link:hover { background: rgba(139, 92, 246, 0.1); color: var(--light-blue); transform: translateX(5px); }
+        .nav-link.active { background: var(--admin-gradient); color: white; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+        .nav-link i { width: 20px; text-align: center; }
+        .nav-section { padding: 20px 25px 10px 25px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; }
+        
+        /* Encryption Analytics */
+        .encryption-analytics { padding: 20px 25px; background: rgba(30, 41, 59, 0.3); border-radius: 12px; margin: 20px 15px; border: 1px solid rgba(139, 92, 246, 0.2); }
+        .analytics-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-weight: 600; color: var(--text-light); }
+        .analytics-header i { color: var(--admin-purple); }
+        .analytics-stats { display: flex; flex-direction: column; gap: 12px; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-info { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+        .stat-value { font-weight: 600; color: var(--text-light); }
+        
+        /* Main Content */
+        .main-content { flex: 1; margin-left: 280px; min-height: 100vh; }
+        .navbar { background: rgba(10, 15, 43, 0.95); backdrop-filter: blur(10px); padding: 15px 0; border-bottom: 1px solid rgba(59, 130, 246, 0.1); position: sticky; top: 0; z-index: 99; }
+        .navbar-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .user-info { color: var(--text-light); font-weight: 600; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .dashboard-header-text h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; background: var(--admin-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .dashboard-header-text p { color: var(--text-muted); font-size: 1.1rem; }
+        .admin-badge { display: inline-block; background: var(--admin-gradient); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); margin-top: 10px; }
+        
+        .btn-activities { background: var(--admin-gradient); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); transition: all 0.3s ease; }
+        .btn-activities:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5); }
+
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue)); border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border: 1px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); border-color: rgba(139, 92, 246, 0.4); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--admin-gradient); }
+        .stat-content { display: flex; align-items: center; gap: 20px; }
+        .stat-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--admin-gradient); color: white; font-size: 2rem; flex-shrink: 0; }
+        .stat-info-main { flex: 1; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--text-light); margin-bottom: 5px; line-height: 1; }
+        .stat-label { font-size: 1.1rem; color: var(--text-muted); font-weight: 500; margin-bottom: 8px; }
+        .stat-change { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; font-weight: 600; }
+        .change-up { color: #10b981; }
+        
+        /* Chart Section */
+        .chart-section { background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue)); border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border: 1px solid rgba(139, 92, 246, 0.2); margin-bottom: 40px; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .chart-header h2 { font-size: 1.5rem; font-weight: 600; color: var(--text-light); }
+        .chart-container { position: relative; height: 400px; width: 100%; }
+        
+        /* Footer */
+        footer { background: var(--deep-blue); padding: 20px 0; border-top: 1px solid rgba(59, 130, 246, 0.1); text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+        
+        /* Mobile */
+        .mobile-menu-btn { display: none; }
+        @media (max-width: 992px) { .vertical-navbar { width: 250px; } .main-content { margin-left: 250px; } .stats-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .dashboard-header { flex-direction: column; gap: 20px; align-items: flex-start; text-align: left; }
+            .vertical-navbar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .vertical-navbar.mobile-open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-btn { display: block; position: fixed; top: 20px; left: 20px; z-index: 101; background: var(--admin-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+
+    <nav class="vertical-navbar" id="verticalNavbar">
+        <div class="nav-header">
+            <a href="/index/" class="nav-logo"><i class="fas fa-user-secret"></i><span>PixelSafe</span></a>
+            <div class="admin-badge"><i class="fas fa-shield-alt"></i> Administrator</div>
+        </div>
+        <div class="nav-section">Main</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="/admindash/" class="nav-link active"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+            <li class="nav-item"><a href="/userlist/" class="nav-link"><i class="fas fa-users"></i>User Management</a></li>
+            <li class="nav-item"><a href="/recent_activities/" class="nav-link"><i class="fas fa-history"></i>Recent Activities</a></li>
+        </ul>
+        
+        <div class="encryption-analytics">
+            <div class="analytics-header"><i class="fas fa-chart-line"></i>Total Activity</div>
+            <div class="analytics-stats">
+                <div class="stat-row">
+                    <div class="stat-info"><i class="fas fa-lock" style="color: #10b981;"></i><span>Encrypted</span></div>
+                    <div class="stat-value">{{ total_encoded }}</div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-info"><i class="fas fa-unlock" style="color: #3b82f6;"></i><span>Decrypted</span></div>
+                    <div class="stat-value">{{ total_decoded }}</div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-info"><i class="fas fa-users" style="color: #8b5cf6;"></i><span>Users</span></div>
+                    <div class="stat-value">{{ active_users }}</div>
+                </div>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="/logout/" class="nav-link" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="main-content">
+        <header class="navbar">
+            <div class="navbar-container">
+                <div class="nav-links"></div>
+                <div class="user-info"><span>Welcome, Admin</span></div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="dashboard-header-text">
+                    <h1>Encryption Analytics</h1>
+                    <p>Monitor encryption and decryption activities in real-time</p>
+                    <div class="admin-badge"><i class="fas fa-shield-alt"></i> Security Dashboard</div>
+                </div>
+                <a href="/recent_activities/" class="btn-activities">
+                    <i class="fas fa-list-ul"></i> View All Activities
+                </a>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-info-main">
+                            <div class="stat-value">{{ active_users }}</div>
+                            <div class="stat-label">Active Users</div>
+                            <div class="stat-change change-up"><i class="fas fa-check-circle"></i> Registered Accounts</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-icon"><i class="fas fa-lock"></i></div>
+                        <div class="stat-info-main">
+                            <div class="stat-value">{{ total_encoded }}</div>
+                            <div class="stat-label">Files Encrypted</div>
+                            <div class="stat-change change-up"><i class="fas fa-file-shield"></i> Total Lifetime</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-icon"><i class="fas fa-unlock"></i></div>
+                        <div class="stat-info-main">
+                            <div class="stat-value">{{ total_decoded }}</div>
+                            <div class="stat-label">Files Decrypted</div>
+                            <div class="stat-change change-up"><i class="fas fa-file-export"></i> Total Lifetime</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-section">
+                <div class="chart-header">
+                    <h2>Encryption vs Decryption (Last 7 Days)</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="encryptionChart"></canvas>
+                </div>
+            </div>
+        </div>
+         
+        <footer>
+            <div class="navbar-container"><p>&copy; 2023 PixelSafe. All rights reserved.</p></div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const verticalNavbar = document.getElementById('verticalNavbar');
+            mobileMenuBtn.addEventListener('click', function() {
+                verticalNavbar.classList.toggle('mobile-open');
+            });
+            initializeChart();
+        });
+
+        function initializeChart() {
+            const encryptionCtx = document.getElementById('encryptionChart').getContext('2d');
+            
+            // Parse JSON data passed from Django View
+            const labels = JSON.parse('{{ chart_labels|safe }}');
+            const encData = JSON.parse('{{ chart_enc_data|safe }}');
+            const decData = JSON.parse('{{ chart_dec_data|safe }}');
+
+            const encryptionChart = new Chart(encryptionCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Files Encrypted',
+                            data: encData,
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#8b5cf6',
+                            pointRadius: 5
+                        },
+                        {
+                            label: 'Files Decrypted',
+                            data: decData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#3b82f6',
+                            pointRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#e5e7eb', font: { size: 13 } } }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#9ca3af' } },
+                        y: { grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#9ca3af', beginAtZero: true } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

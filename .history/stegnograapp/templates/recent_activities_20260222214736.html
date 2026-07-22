@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelSafe - Recent Activities</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue: #0a0f2b; --dark-blue: #111827; --medium-blue: #1e293b;
+            --accent-blue: #3b82f6; --light-blue: #60a5fa; --bright-blue: #93c5fd;
+            --neon-blue: #00d9ff; --admin-purple: #8b5cf6; --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --gradient: linear-gradient(135deg, var(--accent-blue), var(--light-blue));
+            --admin-gradient: linear-gradient(135deg, var(--admin-purple), var(--accent-blue));
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%); color: var(--text-light); line-height: 1.6; min-height: 100vh; overflow-x: hidden; display: flex; }
+        
+        /* Vertical Navbar */
+        .vertical-navbar { width: 280px; background: rgba(10, 15, 43, 0.95); backdrop-filter: blur(10px); border-right: 1px solid rgba(59, 130, 246, 0.1); height: 100vh; position: fixed; left: 0; top: 0; z-index: 100; padding: 20px 0; overflow-y: auto; }
+        .vertical-navbar::-webkit-scrollbar { width: 6px; }
+        .vertical-navbar::-webkit-scrollbar-track { background: rgba(30, 41, 59, 0.5); }
+        .vertical-navbar::-webkit-scrollbar-thumb { background: var(--admin-purple); border-radius: 3px; }
+        
+        .nav-header { padding: 0 25px 25px 25px; border-bottom: 1px solid rgba(59, 130, 246, 0.1); margin-bottom: 25px; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--text-light); margin-bottom: 20px; }
+        .nav-logo span { background: var(--admin-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+        .nav-menu { list-style: none; padding: 0 15px; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: var(--text-light); text-decoration: none; border-radius: 10px; transition: all 0.3s ease; font-weight: 500; }
+        .nav-link:hover { background: rgba(139, 92, 246, 0.1); color: var(--light-blue); transform: translateX(5px); }
+        .nav-link.active { background: var(--admin-gradient); color: white; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+        .nav-link i { width: 20px; text-align: center; }
+        .nav-section { padding: 20px 25px 10px 25px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; }
+        
+        /* Encryption Analytics */
+        .encryption-analytics { padding: 20px 25px; background: rgba(30, 41, 59, 0.3); border-radius: 12px; margin: 20px 15px; border: 1px solid rgba(139, 92, 246, 0.2); }
+        .analytics-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-weight: 600; color: var(--text-light); }
+        .analytics-header i { color: var(--admin-purple); }
+        .analytics-stats { display: flex; flex-direction: column; gap: 12px; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-info { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+        .stat-value { font-weight: 600; color: var(--text-light); }
+        
+        /* Main Content */
+        .main-content { flex: 1; margin-left: 280px; min-height: 100vh; }
+        .navbar { background: rgba(10, 15, 43, 0.95); backdrop-filter: blur(10px); padding: 15px 0; border-bottom: 1px solid rgba(59, 130, 246, 0.1); position: sticky; top: 0; z-index: 99; }
+        .navbar-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .user-info { color: var(--text-light); font-weight: 600; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; }
+        .dashboard-header { text-align: left; margin-bottom: 40px; }
+        .dashboard-header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; background: var(--admin-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .dashboard-header p { color: var(--text-muted); font-size: 1.1rem; }
+        
+        /* Activities Table */
+        .activities-panel { background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue)); border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border: 1px solid rgba(139, 92, 246, 0.2); }
+        
+        .activities-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .activities-table th { text-align: left; padding: 15px; border-bottom: 2px solid rgba(139, 92, 246, 0.3); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        .activities-table td { padding: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-light); vertical-align: middle; }
+        .activities-table tr:hover td { background: rgba(139, 92, 246, 0.05); }
+        
+        /* User Badge Styling */
+        .user-badge { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+        .user-badge i { color: var(--light-blue); font-size: 1.2rem; }
+        .user-email { font-size: 0.8rem; color: var(--text-muted); display: block; }
+        
+        .activity-type { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .type-encode { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .type-decode { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .type-other { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3); }
+        
+        .file-info { display: flex; align-items: center; gap: 10px; }
+        .file-icon { width: 35px; height: 35px; border-radius: 8px; background: rgba(30, 41, 59, 0.8); display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        
+        .timestamp { color: var(--text-light); font-weight: 500; }
+        .timestamp-date { color: var(--text-muted); font-size: 0.8rem; font-weight: 400; display: block; margin-top: 3px; }
+        
+        /* Footer */
+        footer { background: var(--deep-blue); padding: 20px 0; border-top: 1px solid rgba(59, 130, 246, 0.1); text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+        
+        /* Mobile */
+        .mobile-menu-btn { display: none; }
+        @media (max-width: 992px) { .vertical-navbar { width: 250px; } .main-content { margin-left: 250px; } }
+        @media (max-width: 768px) {
+            .vertical-navbar { transform: translateX(-100%); transition: transform 0.3s ease; }
+            .vertical-navbar.mobile-open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-btn { display: block; position: fixed; top: 20px; left: 20px; z-index: 101; background: var(--admin-gradient); color: white; border: none; padding: 10px; border-radius: 8px; font-size: 1.2rem; }
+            .activities-table { display: block; overflow-x: auto; white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+
+    <nav class="vertical-navbar" id="verticalNavbar">
+        <div class="nav-header">
+            <a href="/index/" class="nav-logo"><i class="fas fa-user-secret"></i><span>PixelSafe</span></a>
+            <div class="admin-badge" style="display: inline-block; background: var(--admin-gradient); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;"><i class="fas fa-shield-alt"></i> Administrator</div>
+        </div>
+        <div class="nav-section">Main</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="/admindash/" class="nav-link"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
+            <li class="nav-item"><a href="/userlist/" class="nav-link"><i class="fas fa-users"></i>User Management</a></li>
+            <li class="nav-item"><a href="/recent_activities/" class="nav-link active"><i class="fas fa-history"></i>Recent Activities</a></li>
+        </ul>
+        
+        <div class="encryption-analytics">
+            <div class="analytics-header"><i class="fas fa-chart-line"></i>Total Activity</div>
+            <div class="analytics-stats">
+                <div class="stat-row">
+                    <div class="stat-info"><i class="fas fa-lock" style="color: #10b981;"></i><span>Encrypted</span></div>
+                    <div class="stat-value">{{ total_encoded }}</div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-info"><i class="fas fa-unlock" style="color: #3b82f6;"></i><span>Decrypted</span></div>
+                    <div class="stat-value">{{ total_decoded }}</div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-info"><i class="fas fa-users" style="color: #8b5cf6;"></i><span>Users</span></div>
+                    <div class="stat-value">{{ active_users }}</div>
+                </div>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="/logout/" class="nav-link" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+        </ul>
+    </nav>
+    
+    <div class="main-content">
+        <header class="navbar">
+            <div class="navbar-container">
+                <div class="nav-links"></div>
+                <div class="user-info"><span>Welcome, Admin</span></div>
+            </div>
+        </header>
+        
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Platform Activity Log</h1>
+                <p>A chronological record of all steganography encoding and decoding operations across PixelSafe.</p>
+            </div>
+            
+            <div class="activities-panel">
+                <table class="activities-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action Type</th>
+                            <th>Target File</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                        <tr>
+                            <td>
+                                <div class="user-badge">
+                                    <i class="fas fa-user-circle"></i> 
+                                    <div>
+                                        {% if activity.user %}
+                                            {{ activity.user.username }}
+                                            <span class="user-email">{{ activity.user.email }}</span>
+                                        {% else %}
+                                            Guest User
+                                            <span class="user-email">Unregistered</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                {% if "Encoded" in activity.activity_type %}
+                                    <span class="activity-type type-encode"><i class="fas fa-lock"></i> {{ activity.activity_type }}</span>
+                                {% elif "Decoded" in activity.activity_type %}
+                                    <span class="activity-type type-decode"><i class="fas fa-unlock"></i> {{ activity.activity_type }}</span>
+                                {% else %}
+                                    <span class="activity-type type-other"><i class="fas fa-info-circle"></i> {{ activity.activity_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="file-info">
+                                    <div class="file-icon">
+                                        {% if "Image" in activity.activity_type or "image" in activity.activity_type|lower %}
+                                            <i class="fas fa-image"></i>
+                                        {% elif "Video" in activity.activity_type or "video" in activity.activity_type|lower %}
+                                            <i class="fas fa-film"></i>
+                                        {% elif "Audio" in activity.activity_type or "audio" in activity.activity_type|lower %}
+                                            <i class="fas fa-music"></i>
+                                        {% else %}
+                                            <i class="fas fa-file"></i>
+                                        {% endif %}
+                                    </div>
+                                    <span>
+                                        {% if activity.media %}
+                                            {{ activity.media.name }}
+                                        {% elif activity.stego_media %}
+                                            {{ activity.stego_media.name }}
+                                        {% else %}
+                                            Processing File
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="timestamp">
+                                <i class="far fa-clock"></i> {{ activity.uploaded_at|timesince }} ago
+                                <span class="timestamp-date">{{ activity.uploaded_at|date:"M d, Y, h:i A" }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i><br>
+                                No recent activity found on the platform.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+         
+        <footer>
+            <div class="navbar-container"><p>&copy; 2023 PixelSafe. All rights reserved.</p></div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const verticalNavbar = document.getElementById('verticalNavbar');
+            mobileMenuBtn.addEventListener('click', function() {
+                verticalNavbar.classList.toggle('mobile-open');
+            });
+        });
+    </script>
+</body>
+</html>

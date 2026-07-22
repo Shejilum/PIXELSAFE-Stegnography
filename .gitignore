@@ -1,0 +1,16 @@
+# Ignore video files
+*.avi
+
+# Ignore media folder (contains large generated files)
+media/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# OS files
+.DS_Store
+Thumbs.db

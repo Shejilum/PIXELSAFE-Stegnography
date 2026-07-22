@@ -1,0 +1,487 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelSafe - Secure Data Hiding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-blue: #0a0f2b;
+            --dark-blue: #111827;
+            --medium-blue: #1e293b;
+            --accent-blue: #3b82f6;
+            --light-blue: #60a5fa;
+            --bright-blue: #93c5fd;
+            --neon-blue: #00d9ff;
+            --warning-yellow: #fbbf24;
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+            --gradient: linear-gradient(135deg, var(--accent-blue), var(--light-blue));
+            --neon-gradient: linear-gradient(135deg, var(--neon-blue), var(--light-blue));
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--deep-blue);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Stop body scroll when modal is open */
+        body.modal-open { overflow: hidden; }
+
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header & Navigation */
+        header {
+            background: rgba(10, 15, 43, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        
+        header.scrolled { background: var(--deep-blue); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); }
+        
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.8rem; font-weight: 800; text-decoration: none; color: var(--text-light); }
+        .logo span { background: var(--neon-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 10px rgba(0, 217, 255, 0.3); }
+        
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: all 0.3s ease; position: relative; }
+        .nav-links a:hover { color: var(--light-blue); }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background: var(--neon-gradient); transition: width 0.3s ease; }
+        .nav-links a:hover::after { width: 100%; }
+        
+        .auth-buttons { display: flex; gap: 15px; }
+        .btn { padding: 12px 28px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; display: inline-block; cursor: pointer; position: relative; overflow: hidden; }
+        .btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; }
+        .btn:hover::before { left: 100%; }
+        .btn-outline { border: 1px solid var(--bright-blue); color: var(--bright-blue); background: transparent; }
+        .btn-outline:hover { background: var(--accent-blue); color: white; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
+        .btn-primary { background: var(--gradient); color: white; border: none; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5); }
+        .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
+        
+        /* Hero Section */
+        .hero { padding: 180px 0 120px; background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%); position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.03"><polygon fill="%2300d9ff" points="0,1000 0,0 1000,0"/></svg>'); background-size: cover; }
+        
+        .hero-bg-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; }
+        .floating-shape { position: absolute; border-radius: 50%; background: rgba(96, 165, 250, 0.1); animation: float 15s infinite ease-in-out; }
+        .shape-1 { width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s; }
+        .shape-2 { width: 200px; height: 200px; top: 60%; right: 10%; animation-delay: 5s; }
+        .shape-3 { width: 150px; height: 150px; bottom: 20%; left: 20%; animation-delay: 10s; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
+        
+        .hero-content { max-width: 800px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+        .hero h1 { font-size: 3.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px; background: linear-gradient(90deg, #fff, var(--bright-blue), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0, 217, 255, 0.2); animation: textGlow 3s ease-in-out infinite alternate; }
+        @keyframes textGlow { 0% { text-shadow: 0 0 20px rgba(0, 217, 255, 0.2); } 100% { text-shadow: 0 0 30px rgba(0, 217, 255, 0.4); } }
+        .hero p { font-size: 1.3rem; color: var(--text-muted); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .hero-buttons { display: flex; gap: 20px; justify-content: center; margin-top: 30px; }
+        
+        /* Features Section */
+        .section { padding: 100px 0; }
+        .section-title { text-align: center; margin-bottom: 60px; }
+        .section-title h2 { font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; position: relative; display: inline-block; }
+        .section-title h2::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: var(--neon-gradient); border-radius: 2px; }
+        .section-title p { color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 1.1rem; }
+        
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .feature-card { background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue)); border-radius: 16px; padding: 40px 30px; text-align: center; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1); position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
+        .feature-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--neon-gradient); opacity: 0; transition: opacity 0.3s ease; z-index: 0; }
+        .feature-card:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); border-color: rgba(0, 217, 255, 0.3); }
+        .feature-card:hover::before { opacity: 0.05; }
+        .feature-icon { font-size: 3.5rem; color: var(--light-blue); margin-bottom: 25px; position: relative; z-index: 1; transition: all 0.3s ease; }
+        .feature-card:hover .feature-icon { color: var(--neon-blue); transform: scale(1.1); }
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 15px; position: relative; z-index: 1; }
+        .feature-card p { color: var(--text-muted); position: relative; z-index: 1; }
+        
+        /* Showcase Section */
+        .showcase { background: linear-gradient(135deg, var(--dark-blue) 0%, var(--deep-blue) 100%); position: relative; overflow: hidden; }
+        .showcase::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.03"><polygon fill="%2300d9ff" points="0,1000 1000,1000 1000,0"/></svg>'); background-size: cover; }
+        .showcase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        .showcase-item { background: var(--medium-blue); border-radius: 16px; overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(59, 130, 246, 0.1); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); position: relative; }
+        .showcase-item:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); border-color: rgba(0, 217, 255, 0.3); }
+        
+        /* Image Styling */
+        .showcase-img { height: 200px; background: var(--dark-blue); position: relative; overflow: hidden; }
+        .showcase-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; opacity: 0.8; }
+        .showcase-item:hover .showcase-img img { transform: scale(1.1); opacity: 1; }
+        .showcase-img::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, var(--medium-blue), transparent); pointer-events: none; }
+        
+        .showcase-content { padding: 25px; position: relative; z-index: 1; }
+        .showcase-content h3 { font-size: 1.4rem; margin-bottom: 10px; }
+        .showcase-content p { color: var(--text-muted); margin-bottom: 20px; }
+        
+        /* How It Works */
+        .steps { display: flex; justify-content: space-between; position: relative; margin-top: 50px; }
+        .steps::before { content: ''; position: absolute; top: 40px; left: 0; width: 100%; height: 2px; background: var(--medium-blue); z-index: 0; }
+        .step { text-align: center; position: relative; z-index: 1; flex: 1; padding: 0 15px; }
+        .step-number { width: 80px; height: 80px; background: var(--neon-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; margin: 0 auto 20px; box-shadow: 0 5px 15px rgba(0, 217, 255, 0.3); transition: all 0.3s ease; }
+        .step:hover .step-number { transform: scale(1.1); box-shadow: 0 8px 20px rgba(0, 217, 255, 0.5); }
+        .step h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .step p { color: var(--text-muted); }
+        
+        /* CTA Section - Fixed Blending */
+        .cta { 
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-blue) 100%); 
+            padding: 100px 0; 
+            text-align: center; 
+            position: relative; 
+            overflow: hidden; 
+            border-top: 1px solid rgba(59, 130, 246, 0.1);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        .cta::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" opacity="0.03"><polygon fill="%2300d9ff" points="0,1000 1000,1000 1000,0"/></svg>'); background-size: cover; }
+        .cta-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+        .cta h2 { font-size: 2.8rem; margin-bottom: 20px; color: var(--text-light); }
+        .cta p { font-size: 1.3rem; margin-bottom: 40px; color: var(--text-muted); }
+        
+        /* Footer */
+        footer { background: var(--deep-blue); padding: 80px 0 30px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 50px; }
+        .footer-col h3 { font-size: 1.3rem; margin-bottom: 25px; position: relative; display: inline-block; }
+        .footer-col h3::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 40px; height: 3px; background: var(--neon-gradient); }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; transition: all 0.3s ease; }
+        .footer-links a:hover { color: var(--light-blue); padding-left: 5px; }
+        .social-links { display: flex; gap: 15px; margin-top: 20px; }
+        .social-links a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: var(--medium-blue); border-radius: 50%; color: var(--text-light); text-decoration: none; transition: all 0.3s ease; }
+        .social-links a:hover { background: var(--neon-gradient); transform: translateY(-3px); }
+        .copyright { text-align: center; padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-muted); font-size: 0.9rem; }
+        
+        /* DISCLAIMER MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 43, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-box {
+            background: linear-gradient(135deg, var(--medium-blue), var(--dark-blue));
+            border: 1px solid var(--neon-blue);
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 217, 255, 0.2);
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        
+        .modal-overlay.active .modal-box {
+            transform: scale(1) translateY(0);
+        }
+        
+        .modal-icon {
+            font-size: 3.5rem;
+            color: var(--warning-yellow);
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); text-shadow: 0 0 0 rgba(251, 191, 36, 0.4); }
+            50% { transform: scale(1.1); text-shadow: 0 0 20px rgba(251, 191, 36, 0.7); }
+            100% { transform: scale(1); text-shadow: 0 0 0 rgba(251, 191, 36, 0.4); }
+        }
+        
+        .modal-box h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .modal-box p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        .warning-text {
+            color: var(--light-blue);
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) { .hero h1 { font-size: 3rem; } .steps { flex-direction: column; gap: 40px; } .steps::before { display: none; } .step { display: flex; align-items: center; text-align: left; gap: 20px; } .step-number { margin: 0; flex-shrink: 0; } }
+        @media (max-width: 768px) { .nav-links, .auth-buttons { display: none; } .mobile-toggle { display: block; } .hero h1 { font-size: 2.5rem; } .hero-buttons { flex-direction: column; align-items: center; } .section { padding: 70px 0; } }
+        @media (max-width: 576px) { .hero { padding: 150px 0 80px; } .hero h1 { font-size: 2.2rem; } .section-title h2 { font-size: 2.2rem; } .feature-card { padding: 30px 20px; } .modal-box { padding: 30px 20px; } .modal-box h2 { font-size: 1.6rem; } }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <i class="fas fa-user-secret"></i><span>PixelSafe</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <a href="/login/" class="btn btn-outline">Login</a>
+                    <a href="/register/" class="btn btn-primary">Register</a>
+                </div>
+                <div class="mobile-toggle"><i class="fas fa-bars"></i></div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-bg-animation">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Where Data Disappears Without a Trace</h1>
+                <p>PixelSafe uses advanced steganography to embed your data inside everyday files with zero visible changes. To the outside world, it's just a normal file. To you, it's a secure message hidden in plain sight.</p>
+                <div class="hero-buttons">
+                    <a href="/register/" class="btn btn-primary">Get Started Free</a>
+                    <a href="#how-it-works" class="btn btn-outline">How It Works</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose PixelSafe?</h2>
+                <p>Our advanced steganography technology offers unparalleled security.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Military-Grade Security</h3>
+                    <p>Advanced encryption ensures your hidden data remains completely secure and undetectable.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-file-image"></i></div>
+                    <h3>Multiple File Types</h3>
+                    <p>Hide data in images, audio files, videos, and documents with versatile tools.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Lightning Fast</h3>
+                    <p>Embed and extract hidden data in seconds with optimized algorithms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section showcase">
+        <div class="container">
+            <div class="section-title">
+                <h2>See Steganography in Action</h2>
+                <p>Discover how PixelSafe can hide your data in various file types.</p>
+            </div>
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <div class="showcase-img">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80" alt="Image Steganography">
+                    </div>
+                    <div class="showcase-content">
+                        <h3>Image Steganography</h3>
+                        <p>Hide sensitive data inside images without altering their appearance.</p>
+                        <a href="#" class="btn btn-outline">Learn More</a>
+                    </div>
+                </div>
+                
+                <div class="showcase-item">
+                    <div class="showcase-img">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80" alt="Audio Steganography">
+                    </div>
+                    <div class="showcase-content">
+                        <h3>Audio Steganography</h3>
+                        <p>Conceal messages within audio files. Indistinguishable to the human ear.</p>
+                        <a href="#" class="btn btn-outline">Learn More</a>
+                    </div>
+                </div>
+                
+                <div class="showcase-item">
+                    <div class="showcase-img">
+                        <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=800&q=80" alt="Video Steganography">
+                    </div>
+                    <div class="showcase-content">
+                        <h3>Video Steganography</h3>
+                        <p>Embed secure information in video files while maintaining video quality.</p>
+                        <a href="#" class="btn btn-outline">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>How PixelSafe Works</h2>
+                <p>Our simple three-step process makes data hiding accessible.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload Your File</h3>
+                    <p>Select the image, audio, or video file you want to use as a carrier.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Add Your Message</h3>
+                    <p>Enter text or upload the file you want to hide securely.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Download & Share</h3>
+                    <p>Download your new file with hidden data and share it securely.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Secure Your Data?</h2>
+                <p>Join users who trust PixelSafe to protect their sensitive information.</p>
+                <a href="/register/" class="btn btn-primary">Start Your Free Trial</a>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>PixelSafe</h3>
+                    <p>Advanced steganography solutions for secure data hiding.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright"><p>&copy; 2023 PixelSafe. All rights reserved.</p></div>
+        </div>
+    </footer>
+
+    <div id="disclaimer-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>Risk Warning</h2>
+            <p>
+                Steganography is a powerful tool, but it involves significant risks.
+                <br><br>
+                <span class="warning-text">Use this platform wisely.</span>
+                <br>
+                Misuse of this technology to conceal illegal content or malicious data is a serious crime. The consequences of illegal use may be severe. By proceeding, you agree to use PixelSafe responsibly and legally.
+            </p>
+            <button id="accept-btn" class="btn btn-primary">I Understand & Accept</button>
+        </div>
+    </div>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+        
+        // Mobile toggle
+        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+            const navLinks = document.querySelector('.nav-links');
+            const authButtons = document.querySelector('.auth-buttons');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            authButtons.style.display = authButtons.style.display === 'flex' ? 'none' : 'flex';
+        });
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({ top: targetElement.offsetTop - 80, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // MODAL JAVASCRIPT LOGIC (REVERTED TO POP UP EVERY TIME)
+        window.addEventListener('load', () => {
+            const modal = document.getElementById('disclaimer-modal');
+            const body = document.body;
+            
+            // Short delay for smoother effect
+            setTimeout(() => {
+                modal.classList.add('active');
+                body.classList.add('modal-open');
+            }, 500);
+            
+            // Handle accept button click
+            document.getElementById('accept-btn').addEventListener('click', () => {
+                // Hide modal
+                modal.classList.remove('active');
+                body.classList.remove('modal-open');
+            });
+        });
+    </script>
+</body>
+</html>
